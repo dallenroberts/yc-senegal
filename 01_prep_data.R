@@ -89,13 +89,19 @@ sex_dat$visit_factor <- factor(sex_dat$visit, levels = c("scr", "m1", "m3", "m6"
 ## Create condom binaries
 ## Sex in prior month
 sex_dat$always_condom_client <- ifelse(sex_dat$FreqUtilPreservatif == "toujours", 1, 0)
+sex_dat$not_always_condom_client <- 1 - sex_dat$always_condom_client
 sex_dat$always_condom_main <- ifelse(sex_dat$FreqUtilervatifPart == "toujours", 1, 0)
+sex_dat$not_always_condom_main <- 1 - sex_dat$always_condom_main
 sex_dat$always_condom_both <- ifelse(sex_dat$always_condom_client == 1 & sex_dat$always_condom_main == 1, 1, 0)
+sex_dat$not_always_condom_both <- 1 - sex_dat$always_condom_both
 
 ## Most recent sex
 sex_dat$used_condom_recent_client <- ifelse(sex_dat$UtiliseUnPresevatif == "o", 1, 0)
+sex_dat$not_used_condom_recent_client <- 1 - sex_dat$used_condom_recent_client
 sex_dat$used_condom_recent_main <- ifelse(sex_dat$PreservaPartenaires == "o", 1, 0)
+sex_dat$not_used_condom_recent_main <- 1 - sex_dat$used_condom_recent_main
 sex_dat$used_condom_recent_both <- ifelse(sex_dat$used_condom_recent_client == 1 & sex_dat$used_condom_recent_main == 1, 1, 0)
+sex_dat$not_used_condom_recent_both <- 1 - sex_dat$used_condom_recent_both
 
 ## Reported sexual partners
 ## Reports sex with a main partner in the last month
