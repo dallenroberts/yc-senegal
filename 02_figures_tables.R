@@ -93,6 +93,13 @@ condom_dat <- sex_dat %>%
 
 condom_dat[, c("lower", "upper")] <- binom.confint(condom_dat$num_inconsistent, condom_dat$n, methods = "wilson")[, c("lower", "upper")]
 
+## Proportion of participants reporting inconsistent condom use over the last month at baseline and at 12 months
+## With clients
+condom_dat[condom_dat$measure == "Clients" & condom_dat$visit_factor %in% c("scr", "m12"), ]
+
+## With main partner
+condom_dat[condom_dat$measure == "Main Partner" & condom_dat$visit_factor %in% c("scr", "m12"), ]
+
 condom_use_time_point_plot <- ggplot(condom_dat, aes(x = visit_num, y = pct * 100, group = measure)) +
   geom_point(aes(color = measure, shape = measure)) +
   geom_errorbar(aes(ymin = 100*lower, ymax = 100*upper, colour = measure), width = 0.25) +
@@ -123,6 +130,8 @@ clients_dat <- sex_dat %>%
   mutate(visit_num =c(0, 1, 3, 6, 9, 12)) %>%
   mutate(lower = mean - (1.96*sd/sqrt(n)), upper = mean + (1.96*sd/sqrt(n)))
 
+## Number of clients reported at baseline and at month 12
+clients_dat[clients_dat$visit_factor %in% c("scr", "m12"), ]
 
 clients_time_point_plot <- ggplot(data = clients_dat, aes(x = visit_num, y = mean)) +
   geom_point() +
