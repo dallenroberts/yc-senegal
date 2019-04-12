@@ -20,8 +20,8 @@ citab_num_clients <- with(as.data.frame(cc_num_clients),
                        lwr=Estimate-1.96*Std.err,
                        upr=Estimate+1.96*Std.err))
 rownames(citab_num_clients) <- rownames(cc_num_clients)
-## beta  = -0.0503, 95% confidence interval: [-0.135, 0.0341]
-## p-value for trend = 0.24
+## beta  = -0.0436, 95% confidence interval: [-0.128, 0.0408]
+## p-value for trend = 0.31
 
 ## Condom use with clients
 mod_condom_clients <- geeglm(not_always_condom_client ~ visit_num, data = gee_dat, family = binomial(link = "logit"), id = id, corstr = 'exchangeable') 
@@ -45,7 +45,7 @@ citab_condom_main <- with(as.data.frame(cc_condom_main),
                                    upr=exp(Estimate+1.96*Std.err)))
 rownames(citab_condom_main) <- rownames(cc_condom_main)
 ## OR: 0.99, 95% CI: [0.96, 1.02]
-## p-value: 0.49
+## p-value: 0.48
 
 ## Most recent sex 
 ## With client
@@ -58,7 +58,7 @@ citab_condom_client_recent <- with(as.data.frame(cc_condom_client_recent),
                                        upr=exp(Estimate+1.96*Std.err)))
 rownames(citab_condom_client_recent) <- rownames(cc_condom_client_recent)
 ## OR: 1.00, 95% CI: [0.94, 1.06]
-## p-value: 0.97
+## p-value: 0.95
 
 ## With main partner
 mod_condom_main_recent <- geeglm(not_used_condom_recent_main ~ visit_num, data = gee_dat, family = binomial(link = "logit"), id = id, corstr = 'exchangeable') 
@@ -82,8 +82,8 @@ citab_yc <- with(as.data.frame(cc_yc),
                     lwr=exp(Estimate-1.96*Std.err),
                     upr=exp(Estimate+1.96*Std.err)))
 rownames(citab_yc) <- rownames(cc_yc)
-## OR = 0.966, 95% confidence interval: [0.89, 1.05]
-## p-value for trend = 0.4
+## OR = 0.95, 95% confidence interval: [0.88, 1.04]
+## p-value for trend = 0.26
 
 ############################################################################################
 ## Predictors of Yc detection
@@ -245,8 +245,6 @@ sex_dat %>%
   summarise(n = n()) %>%
   mutate(pct = n/sum(n))
 
-# 
-# mod_condom_client <- geeglm(yc_result ~ always_condom_client, data = na.omit(sex_dat[, c("id", "yc_result", "always_condom_client")]), family = binomial(link = "logit"), id = id, corstr = "exchangeable")
 mod_condom_client <- geeglm(yc_result ~ not_always_condom_client, data = na.omit(sex_dat[, c("id", "yc_result", "not_always_condom_client")]), family = binomial(link = "logit"), id = id, corstr = "exchangeable")
 
 summary(mod_condom_client)
@@ -256,7 +254,6 @@ citab_condom_client <- with(as.data.frame(cc_condom_client),
                          lwr=exp(Estimate-1.96*Std.err),
                          upr=exp(Estimate+1.96*Std.err)))
 rownames(citab_condom_client) <- rownames(cc_condom_client)
-## OR = 1.337, 95% CI: [0.1696, 10.54], p = 0.78
 ## OR = 0.748, 95% CI: [0.0948, 5.896], p = 0.78
 
 ## Condom use with main partner
@@ -267,7 +264,6 @@ sex_dat %>%
   summarise(n = n()) %>%
   mutate(pct = n/sum(n))
 
-# mod_condom_main <- geeglm(yc_result ~ always_condom_main, data = na.omit(sex_dat[sex_dat$NbrePartMoisDernier > 0, c("id", "yc_result", "always_condom_main")]), family = binomial(link = "logit"), id = id, corstr = "exchangeable")
 mod_condom_main <- geeglm(yc_result ~ not_always_condom_main, data = na.omit(sex_dat[sex_dat$NbrePartMoisDernier > 0, c("id", "yc_result", "not_always_condom_main")]), family = binomial(link = "logit"), id = id, corstr = "exchangeable")
 
 summary(mod_condom_main)
@@ -277,7 +273,6 @@ citab_condom_main <- with(as.data.frame(cc_condom_main),
                                   lwr=exp(Estimate-1.96*Std.err),
                                   upr=exp(Estimate+1.96*Std.err)))
 rownames(citab_condom_main) <- rownames(cc_condom_main)
-## OR = 1.28, 95% CI: [0.411, 3.96], p = 0.67
 ## OR = 0.78, 95% CI: [0.25, 2.43], p = 0.67
 
 ## Both
@@ -288,7 +283,6 @@ sex_dat %>%
   summarise(n = n()) %>%
   mutate(pct = n/sum(n))
 
-# mod_condom_both <- geeglm(yc_result ~ always_condom_both, data = na.omit(sex_dat[sex_dat$NbrePartMoisDernier > 0, c("id", "yc_result", "always_condom_both")]), family = binomial(link = "logit"), id = id, corstr = "exchangeable")
 mod_condom_both <- geeglm(yc_result ~ not_always_condom_both, data = na.omit(sex_dat[sex_dat$NbrePartMoisDernier > 0, c("id", "yc_result", "not_always_condom_both")]), family = binomial(link = "logit"), id = id, corstr = "exchangeable")
 
 summary(mod_condom_both)
@@ -298,7 +292,6 @@ citab_condom_both <- with(as.data.frame(cc_condom_both),
                                 lwr=exp(Estimate-1.96*Std.err),
                                 upr=exp(Estimate+1.96*Std.err)))
 rownames(citab_condom_both) <- rownames(cc_condom_both)
-## OR = 0.9600, 95% CI: [0.350, 2.637], p = 0.71
 ## OR = 0.80, 95% CI: [0.25, 2.55], p = 0.71
 
 ## Condom use at most recent sex with client
@@ -308,7 +301,6 @@ sex_dat %>%
   summarise(n = n()) %>%
   mutate(pct = n/sum(n))
 
-# mod_condom_client_recent <- geeglm(yc_result ~ used_condom_recent_client, data = na.omit(sex_dat[, c("id", "yc_result", "used_condom_recent_client")]), family = binomial(link = "logit"), id = id, corstr = "exchangeable")
 mod_condom_client_recent <- geeglm(yc_result ~ not_used_condom_recent_client, data = na.omit(sex_dat[, c("id", "yc_result", "not_used_condom_recent_client")]), family = binomial(link = "logit"), id = id, corstr = "exchangeable")
 
 summary(mod_condom_client_recent)
@@ -318,7 +310,6 @@ citab_condom_client_recent <- with(as.data.frame(cc_condom_client_recent),
                                   lwr=exp(Estimate-1.96*Std.err),
                                   upr=exp(Estimate+1.96*Std.err)))
 rownames(citab_condom_client_recent) <- rownames(cc_condom_client_recent)
-## OR = 0.571, 95% CI: [0.0499, 6.53], p = 0.65
 ## OR = 1.75, 95% CI: [0.15, 20.03], p = 0.65
 
 ## Condom use at most recent sex with main partner
@@ -329,7 +320,6 @@ sex_dat %>%
   summarise(n = n()) %>%
   mutate(pct = n/sum(n))
 
-# mod_condom_main_recent <- geeglm(yc_result ~ used_condom_recent_main, data = na.omit(sex_dat[sex_dat$NbrePartMoisDernier > 0, c("id", "yc_result", "used_condom_recent_main")]), family = binomial(link = "logit"), id = id, corstr = "exchangeable")
 mod_condom_main_recent <- geeglm(yc_result ~ not_used_condom_recent_main, data = na.omit(sex_dat[sex_dat$NbrePartMoisDernier > 0, c("id", "yc_result", "not_used_condom_recent_main")]), family = binomial(link = "logit"), id = id, corstr = "exchangeable")
 
 summary(mod_condom_main_recent)
@@ -349,7 +339,6 @@ sex_dat %>%
   summarise(n = n()) %>%
   mutate(pct = n/sum(n))
 
-# mod_condom_both_recent <- geeglm(yc_result ~ used_condom_recent_both, data = na.omit(sex_dat[sex_dat$NbrePartMoisDernier > 0, c("id", "yc_result", "used_condom_recent_both")]), family = binomial(link = "logit"), id = id, corstr = "exchangeable")
 mod_condom_both_recent <- geeglm(yc_result ~ not_used_condom_recent_both, data = na.omit(sex_dat[sex_dat$NbrePartMoisDernier > 0, c("id", "yc_result", "not_used_condom_recent_both")]), family = binomial(link = "logit"), id = id, corstr = "exchangeable")
 
 summary(mod_condom_both_recent)

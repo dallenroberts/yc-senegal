@@ -15,6 +15,9 @@ library(lubridate)
 ## Combined data file
 dat <- read_excel("../../yc/data/c.20180626_Senegal and Seattle Combined Juin 2018.xlsx")
 
+## Number of FSW screened
+nrow(dat) ## 350
+
 ## Yc results correction - discordant samples
 dat$ychromom3[dat$h00IdNumber == 3056] <- "P"
 
@@ -73,6 +76,9 @@ yc_dat <- yc_dat %>%
   select(-key) %>%
   spread(key = type, value = value)
 
+## Fix mislabeled ID 
+yc_dat$id[yc_dat$id == 4059] <- 4052
+
 ## Remove uncertain value
 yc_dat <- yc_dat[yc_dat$value != "U", ]
 
@@ -129,3 +135,11 @@ sti_dat <- sti_dat %>%
   spread(key = variable, value = value)
 
 sti_dat$visit_factor <- factor(sti_dat$visit, levels = c("scr", "m1", "m3", "m6", "m9", "m12"))
+
+## Drop individuals who weren't enrolled - based on j0 visit date
+enrolled_ids <- unique(dat$h00IdNumber[!is.na(dat$F00_j0_h00VisitDate)])
+dat <- dat[dat$h00IdNumber %in% enrolled_ids, ]
+sex_dat <- sex_dat[sex_dat$id %in% enrolled_ids, ]
+sti_dat <- sti_dat[sti_dat$id %in% enrolled_ids, ]
+yc_dat <- yc_dat[yc_dat$id %in% enrolled_ids, ]
+

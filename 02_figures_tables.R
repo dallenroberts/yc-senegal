@@ -6,6 +6,33 @@ library(binom)
 ############################################################################################
 ## Results in text
 ############################################################################################
+## Number of Yc samples
+nrow(yc_dat) ## 154
+
+## Number of women tested for Yc
+length(unique(yc_dat$id)) ## 121
+
+## Percentage of women with positive Yc result
+yc_woman_dat <- yc_dat %>%
+  group_by(id) %>%
+  summarise(has_positive = any(value == "P")) %>%
+  ungroup() %>%
+  summarise(num_positive = sum(has_positive), pct = sum(has_positive)/n(), n = n())
+yc_woman_dat
+binom.confint(yc_woman_dat$num_positive, yc_woman_dat$n, methods = "wilson")
+
+## Percentage of swabs with positive Yc result
+yc_swab_dat <- yc_dat %>%
+  summarise(num_positive = sum(value == "P"), pct = sum(value == "P")/n(), n = n())
+yc_swab_dat
+binom.confint(yc_swab_dat$num_positive, yc_swab_dat$n, methods = "wilson")
+
+## Number of Yc samples that were positive
+length(which(yc_dat$value == "P")) ## 34
+
+## Percentage of Yc samples that were positive
+length(which(yc_dat$value == "P"))/nrow(yc_dat) ## 22
+
 ## STI testing results
 ## Percent who were either positive at baseline or became positive over the course of the study
 sti_dat %>%
@@ -17,66 +44,61 @@ sti_dat %>%
   select(-id) %>%
   colSums
 
-## Gonorrhea: 8/107 = 7.48%
-## Chlamyida: 8/107 = 7.48%
-## TPHA: 36/223 = 16.1%
+## Gonorrhea: 8/106 = 7.54%
+## Chlamyida: 8/106 = 7.54%
+## TPHA: 34/221 = 15.4%
 
 ############################################################################################
 ## Table 1: Demographics and baseline characterstics of FSW enrolled in PrEP Demo Project
 ############################################################################################
-## Number of FSW screened
-nrow(dat) ## 350
-
-## Number enrolled - drop those who were screened but not enrolled. Doing this on the basis of not having a missing visit date for j0
-base_dat <- dat[!is.na(dat$F00_j0_h00VisitDate), ]
-
-nrow(base_dat) ## 267 women enrolled
+## Number of FSW enrolled
+nrow(dat) ## 267 women enrolled
 
 ## Age (median, IQR)
-length(which(is.na(base_dat$age)))
-quantile(base_dat$age, probs = c(0.25, 0.5, 0.75))
-IQR(base_dat$age)
+length(which(is.na(dat$age)))
+quantile(dat$age, probs = c(0.25, 0.5, 0.75))
+IQR(dat$age)
 
 ## Born in Senegal (%), and birth locations of individuals born outside of Senegal
-mean(base_dat$F00_scr_q04Nationalite == 1)
-base_dat$F00_scr_q04NationaliteAutre[base_dat$F00_scr_q04Nationalite == 2]
+mean(dat$F00_scr_q04Nationalite == 1)
+dat$F00_scr_q04NationaliteAutre[dat$F00_scr_q04Nationalite == 2]
 
 ## Registered vs. unregistered FSW (%)
-mean(base_dat$registered == "Yes", na.rm = TRUE)
-length(which(is.na(base_dat$registered)))
+mean(dat$registered == "Yes", na.rm = TRUE)
+length(which(is.na(dat$registered)))
 
 ## Site (N, %)
-table(base_dat$site)
-table(base_dat$site)/nrow(base_dat)
+table(dat$site)
+table(dat$site)/nrow(dat)
 
 ## Ethnic Group, and number missing
-table(base_dat$F00_scr_q03Ethnie, base_dat$F00_scr_q03EthnieAutre, exclude = NULL)
-table(base_dat$ethnic_group, exclude = NULL)
-table(base_dat$ethnic_group)/length(which(!is.na(base_dat$ethnic_group)))
+table(dat$F00_scr_q03Ethnie, dat$F00_scr_q03EthnieAutre, exclude = NULL)
+table(dat$ethnic_group, exclude = NULL)
+table(dat$ethnic_group)/length(which(!is.na(dat$ethnic_group)))
 
 ## Self-reported number of clients in the prior week (Median, range), and number missing
-base_dat$F14_scr_q03NbreClieDernSemaine[base_dat$F14_j0_q03NbreClieDernSemaine %in% c("NE CONNAIT PAS", "REFUS")] <- NA
-length(which(is.na(base_dat$F14_j0_q03NbreClieDernSemaine)))
+dat$F14_scr_q03NbreClieDernSemaine[dat$F14_j0_q03NbreClieDernSemaine %in% c("NE CONNAIT PAS", "REFUS")] <- NA
+length(which(is.na(dat$F14_j0_q03NbreClieDernSemaine)))
 
-base_dat$num_clients_cat <- cut(as.integer(base_dat$F14_j0_q03NbreClieDernSemaine), breaks = c(-Inf, 0, 2, Inf ), labels = c("0", "1-2", "3+"))
-base_dat %>%
+dat$num_clients_cat <- cut(as.integer(dat$F14_j0_q03NbreClieDernSemaine), breaks = c(-Inf, 0, 2, Inf ), labels = c("0", "1-2", "3+"))
+dat %>%
   group_by(num_clients_cat) %>%
   summarise(n = n()) %>%
   filter(!is.na(num_clients_cat)) %>%
   mutate(pct = n/sum(n))
 
 ## Self-reported had a "Main Partner" - this is in the last six months
-table(base_dat$F14_j0_q11PartenaireSexPrinc, exclude = NULL)
-sum(base_dat$F14_j0_q11PartenaireSexPrinc == "o", na.rm = TRUE)
-mean(base_dat$F14_j0_q11PartenaireSexPrinc == "o", na.rm = TRUE)
+table(dat$F14_j0_q11PartenaireSexPrinc, exclude = NULL)
+sum(dat$F14_j0_q11PartenaireSexPrinc == "o", na.rm = TRUE)
+mean(dat$F14_j0_q11PartenaireSexPrinc == "o", na.rm = TRUE)
 
 ## Self-reported condom use with clients in the last month for vaginal or anal sex, and number missing
-table(base_dat$F14_j0_q05FreqUtilPreservatif, exclude = NULL)
-table(base_dat$F14_j0_q05FreqUtilPreservatif)/length(which(!is.na(base_dat$F14_j0_q05FreqUtilPreservatif)))
+table(dat$F14_j0_q05FreqUtilPreservatif, exclude = NULL)
+table(dat$F14_j0_q05FreqUtilPreservatif)/length(which(!is.na(dat$F14_j0_q05FreqUtilPreservatif)))
 
 ## Self-reported condom use with main partner in the last month for vaginal or anal sex, and number missing
-table(base_dat$F14_j0_q15FreqUtilervatifPart[base_dat$F14_j0_q11PartenaireSexPrinc == "o"], exclude = NULL)
-table(base_dat$F14_j0_q15FreqUtilervatifPart[base_dat$F14_j0_q11PartenaireSexPrinc == "o"])/length(which(!is.na(base_dat$F14_j0_q15FreqUtilervatifPart[base_dat$F14_j0_q11PartenaireSexPrinc == "o"])))
+table(dat$F14_j0_q15FreqUtilervatifPart[dat$F14_j0_q11PartenaireSexPrinc == "o"], exclude = NULL)
+table(dat$F14_j0_q15FreqUtilervatifPart[dat$F14_j0_q11PartenaireSexPrinc == "o"])/length(which(!is.na(dat$F14_j0_q15FreqUtilervatifPart[dat$F14_j0_q11PartenaireSexPrinc == "o"])))
 
 ############################################################################################
 ## Figure 1: Trends in self-reported sexual behavior over time since enrollment 
@@ -154,17 +176,17 @@ dev.off()
 ## Table 2: Yc detection vs. self-reported behavior
 ############################################################################################
 ## Reported sexual partners
-## Main partner in the last month
-sex_dat %>%
-  filter(!is.na(value)) %>%
-  group_by(reports_main_partner, value) %>%
-  summarise(n = n()) %>%
-  mutate(pct = n/sum(n))
-
 ## Client in the last week
 sex_dat %>%
   filter(!is.na(value)) %>%
   group_by(reports_client, value) %>%
+  summarise(n = n()) %>%
+  mutate(pct = n/sum(n))
+
+## Main partner in the last month
+sex_dat %>%
+  filter(!is.na(value)) %>%
+  group_by(reports_main_partner, value) %>%
   summarise(n = n()) %>%
   mutate(pct = n/sum(n))
 
@@ -234,6 +256,8 @@ yc_time_dat <- yc_dat %>%
 
 yc_time_dat[, c("lower", "upper")] <- binom.confint(yc_time_dat$num_swabs_pos, yc_time_dat$num_swabs, methods = "wilson")[, c("lower", "upper")]
 
+yc_time_dat
+
 fig2 <- ggplot(data = yc_time_dat, aes(x = visit_num, y = 100*pct_swabs_pos)) +
   geom_point() +
   geom_errorbar(aes(ymin = 100*lower, ymax = 100*upper), width = 0.2) +
@@ -255,7 +279,7 @@ dev.off()
 base_dat_yc <- dat[dat$h00IdNumber %in% unique(yc_dat$id), ]
 
 ## Number of FSW tested for yc
-nrow(base_dat_yc) ## 131
+nrow(base_dat_yc) ## 121
 
 ## Age (median, IQR)
 length(which(is.na(base_dat_yc$age)))
@@ -275,7 +299,7 @@ table(base_dat_yc$site)/nrow(base_dat_yc)
 
 ## Ethnic Group, and number missing
 table(base_dat_yc$F00_scr_q03Ethnie, base_dat_yc$F00_scr_q03EthnieAutre, exclude = NULL)
-table(base_dat_yc$ethnic_group)
+table(base_dat_yc$ethnic_group, exclude = NULL)
 table(base_dat_yc$ethnic_group)/length(which(!is.na(base_dat_yc$ethnic_group)))
 
 ## Self-reported number of clients in the prior week (Median, range), and number missing 
