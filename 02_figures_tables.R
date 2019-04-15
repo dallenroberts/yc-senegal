@@ -60,10 +60,12 @@ quantile(dat$age, probs = c(0.25, 0.5, 0.75))
 IQR(dat$age)
 
 ## Born in Senegal (%), and birth locations of individuals born outside of Senegal
+length(which(dat$F00_scr_q04Nationalite == 1))
 mean(dat$F00_scr_q04Nationalite == 1)
 dat$F00_scr_q04NationaliteAutre[dat$F00_scr_q04Nationalite == 2]
 
 ## Registered vs. unregistered FSW (%)
+length(which(dat$registered == "Yes"))
 mean(dat$registered == "Yes", na.rm = TRUE)
 length(which(is.na(dat$registered)))
 
