@@ -11,8 +11,10 @@ gee_dat <- sex_dat
 gee_dat$visit_num <- c(0, 1, 3, 6, 9, 12)[match(gee_dat$visit, c("scr", "m1", "m3", "m6", "m9", "m12"))]
 gee_dat$yc_result <- ifelse(gee_dat$value == "P", 1, 0)
 
+gee_dat <- left_join(gee_dat, dat[, c("h00IdNumber", "age_cat", "age", "ethnic_group_cat", "edu", "registered")], by = c("id" = "h00IdNumber"))
+
 ## Number of clients
-mod_num_clients <- geeglm(NbreClieDernSemaine ~ visit_num, data = gee_dat, family = "gaussian", id = id, corstr = 'exchangeable')
+mod_num_clients <- geeglm(NbreClieDernSemaine ~ visit_num + age + ethnic_group_cat + edu, data = gee_dat, family = "gaussian", id = id, corstr = 'exchangeable')
 summary(mod_num_clients)
 cc_num_clients <- coef(summary(mod_num_clients))
 citab_num_clients <- with(as.data.frame(cc_num_clients),
@@ -20,11 +22,16 @@ citab_num_clients <- with(as.data.frame(cc_num_clients),
                        lwr=Estimate-1.96*Std.err,
                        upr=Estimate+1.96*Std.err))
 rownames(citab_num_clients) <- rownames(cc_num_clients)
+## Unadjusted
 ## beta  = -0.0436, 95% confidence interval: [-0.128, 0.0408]
 ## p-value for trend = 0.31
 
+## Adjusted
+## beta  = -0.03959, 95% confidence interval: [-0.1234, 0.04419]
+## p-value for trend = 0.354
+
 ## Condom use with clients
-mod_condom_clients <- geeglm(not_always_condom_client ~ visit_num, data = gee_dat, family = binomial(link = "logit"), id = id, corstr = 'exchangeable') 
+mod_condom_clients <- geeglm(not_always_condom_client ~ visit_num + age + ethnic_group_cat + edu, data = gee_dat, family = binomial(link = "logit"), id = id, corstr = 'exchangeable') 
 summary(mod_condom_clients)
 cc_condom_clients <- coef(summary(mod_condom_clients))
 citab_condom_clients <- with(as.data.frame(cc_condom_clients),
@@ -32,11 +39,17 @@ citab_condom_clients <- with(as.data.frame(cc_condom_clients),
                        lwr=exp(Estimate-1.96*Std.err),
                        upr=exp(Estimate+1.96*Std.err)))
 rownames(citab_condom_clients) <- rownames(cc_condom_clients)
+## Unadjusted
 ## OR: 0.95, 95% CI: [0.89, 1.00]
 ## p-value: 0.06
 
+## Adjusted
+## OR: 0.94, 95% CI: [0.89, 1.00]
+## p-value: 0.053
+
+
 ## Condom use with main partner
-mod_condom_main <- geeglm(not_always_condom_main ~ visit_num, data = gee_dat, family = binomial(link = "logit"), id = id, corstr = 'exchangeable') 
+mod_condom_main <- geeglm(not_always_condom_main ~ visit_num + age + ethnic_group_cat + edu, data = gee_dat, family = binomial(link = "logit"), id = id, corstr = 'exchangeable') 
 summary(mod_condom_main)
 cc_condom_main <- coef(summary(mod_condom_main))
 citab_condom_main <- with(as.data.frame(cc_condom_main),
@@ -44,12 +57,17 @@ citab_condom_main <- with(as.data.frame(cc_condom_main),
                                    lwr=exp(Estimate-1.96*Std.err),
                                    upr=exp(Estimate+1.96*Std.err)))
 rownames(citab_condom_main) <- rownames(cc_condom_main)
+## Unadjusted
 ## OR: 0.99, 95% CI: [0.96, 1.02]
 ## p-value: 0.48
 
+## Adjusted
+## OR: 0.99, 95% CI: [0.96, 1.02]
+## p-value: 0.55
+
 ## Most recent sex 
 ## With client
-mod_condom_client_recent <- geeglm(not_used_condom_recent_client ~ visit_num, data = gee_dat, family = binomial(link = "logit"), id = id, corstr = 'exchangeable') 
+mod_condom_client_recent <- geeglm(not_used_condom_recent_client ~ visit_num + age + ethnic_group_cat + edu, data = gee_dat, family = binomial(link = "logit"), id = id, corstr = 'exchangeable') 
 summary(mod_condom_client_recent)
 cc_condom_client_recent <- coef(summary(mod_condom_client_recent))
 citab_condom_client_recent <- with(as.data.frame(cc_condom_client_recent),
@@ -57,11 +75,16 @@ citab_condom_client_recent <- with(as.data.frame(cc_condom_client_recent),
                                        lwr=exp(Estimate-1.96*Std.err),
                                        upr=exp(Estimate+1.96*Std.err)))
 rownames(citab_condom_client_recent) <- rownames(cc_condom_client_recent)
+## Unadjusted
+## OR: 1.00, 95% CI: [0.94, 1.06]
+## p-value: 0.95
+
+## Adjusted
 ## OR: 1.00, 95% CI: [0.94, 1.06]
 ## p-value: 0.95
 
 ## With main partner
-mod_condom_main_recent <- geeglm(not_used_condom_recent_main ~ visit_num, data = gee_dat, family = binomial(link = "logit"), id = id, corstr = 'exchangeable') 
+mod_condom_main_recent <- geeglm(not_used_condom_recent_main ~ visit_num + age + ethnic_group_cat + edu, data = gee_dat, family = binomial(link = "logit"), id = id, corstr = 'exchangeable') 
 summary(mod_condom_main_recent)
 cc_condom_main_recent <- coef(summary(mod_condom_main_recent))
 citab_condom_main_recent <- with(as.data.frame(cc_condom_main_recent),
@@ -69,12 +92,17 @@ citab_condom_main_recent <- with(as.data.frame(cc_condom_main_recent),
                                 lwr=exp(Estimate-1.96*Std.err),
                                 upr=exp(Estimate+1.96*Std.err)))
 rownames(citab_condom_main_recent) <- rownames(cc_condom_main_recent)
+
+## Unadjusted
 ## OR: 0.99, 95% CI: [0.96, 1.02]
 ## p-value: 0.44
 
+## Adjusted
+## OR: 0.99, 95% CI: [0.96, 1.02]
+## p-value: 0.49
 
 ## Yc detection
-mod_yc <- geeglm(yc_result ~ visit_num, data = gee_dat, family = binomial(link = "logit"), id = id, corstr = 'exchangeable') 
+mod_yc <- geeglm(yc_result ~ visit_num + age + ethnic_group_cat + edu, data = gee_dat, family = binomial(link = "logit"), id = id, corstr = 'exchangeable') 
 summary(mod_yc)
 cc_yc <- coef(summary(mod_yc))
 citab_yc <- with(as.data.frame(cc_yc),
@@ -82,8 +110,13 @@ citab_yc <- with(as.data.frame(cc_yc),
                     lwr=exp(Estimate-1.96*Std.err),
                     upr=exp(Estimate+1.96*Std.err)))
 rownames(citab_yc) <- rownames(cc_yc)
+## Unadjusted
 ## OR = 0.95, 95% confidence interval: [0.88, 1.04]
 ## p-value for trend = 0.26
+
+## Adjusted
+## OR = 0.99, 95% confidence interval: [0.90, 1.08]
+## p-value for trend = 0.82 
 
 ############################################################################################
 ## Predictors of Yc detection
