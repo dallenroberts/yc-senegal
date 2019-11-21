@@ -13,7 +13,7 @@ library(readxl)
 library(lubridate)
 
 ## Combined data file
-dat <- read_excel("../../yc/data/c.20180626_Senegal and Seattle Combined Juin 2018.xlsx")
+dat <- read_excel("../../yc/data/c.20180626_Senegal and Seattle Combined Juin 2018 Duplicate Columns Removed.xlsx")
 
 ## Number of FSW screened
 nrow(dat) ## 350
@@ -44,7 +44,7 @@ dat$ethnic_group_cat <- factor(c("Wolof", "Poulaar", "Serere", "Mandingue", "Oth
 dat$edu <- ifelse(is.na(dat$F00_scr_q09Scolarite), 0, dat$F00_scr_q09Scolarite)
 dat$edu <- factor(dat$edu, levels = c(0, 1, 2), labels = c("None", "Primary", "Secondary"))
 
-sex_question_stems <- c("NbreClieDernSemaine", "UtiliseUnPresevatif", "FreqUtilPreservatif", "UtilisePvatifDepuis", "PartenaireSexPrinc", "NbrePartMoisDernier", "FreqUtilervatifPart", "UtilisePartenDepuis", "PreservaPartenaires")
+sex_question_stems <- c("NbreClieDernSemaine", "UtiliseUnPresevatif", "FreqUtilPreservatif", "UtilisePvatifDepuis", "PartenaireSexPrinc", "NbrePartMoisDernier", "FreqUtilervatifPart", "UtilisePartenDepuis", "PreservaPartenaires", "RaisonsPreservatif", "RaisonsPvatifParten", "ConfiancePreserv", "ConfianceservParten", "ConfiancposerAlcool", "ConfiancposerArgent")
 sex_dat <- dat[, c("h00IdNumber", "site", grep(paste(sex_question_stems, collapse = "|"), names(dat), value = TRUE))]
 
 ## Tidy up

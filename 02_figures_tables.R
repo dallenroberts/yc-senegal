@@ -48,6 +48,13 @@ sti_dat %>%
 ## Chlamyida: 8/106 = 7.54%
 ## TPHA: 34/221 = 15.4%
 
+## Testing at baseline
+sti_dat %>%
+  filter(visit == "scr") %>%
+  summarise(pos_gon = sum(ResultatstGonorrhee == "positif", na.rm = TRUE), tested_gon = sum(!is.na(ResultatstGonorrhee)),
+            pos_chl = sum(ResultatstChlamydia == "positif", na.rm = TRUE), tested_chl = sum(!is.na(ResultatstChlamydia)),
+            pos_tpha = sum(bResultatTPHA == "positif", na.rm = TRUE), tested_tpha = sum(!is.na(bResultatTPHA)))
+
 ############################################################################################
 ## Table 1: Demographics and baseline characterstics of FSW enrolled in PrEP Demo Project
 ############################################################################################
@@ -79,7 +86,7 @@ table(dat$ethnic_group, exclude = NULL)
 table(dat$ethnic_group)/length(which(!is.na(dat$ethnic_group)))
 
 ## Self-reported number of clients in the prior week (Median, range), and number missing
-dat$F14_scr_q03NbreClieDernSemaine[dat$F14_j0_q03NbreClieDernSemaine %in% c("NE CONNAIT PAS", "REFUS")] <- NA
+dat$F14_j0_q03NbreClieDernSemaine[dat$F14_j0_q03NbreClieDernSemaine %in% c("NE CONNAIT PAS", "REFUS")] <- NA
 length(which(is.na(dat$F14_j0_q03NbreClieDernSemaine)))
 
 dat$num_clients_cat <- cut(as.integer(dat$F14_j0_q03NbreClieDernSemaine), breaks = c(-Inf, 0, 2, Inf ), labels = c("0", "1-2", "3+"))
@@ -99,8 +106,8 @@ table(dat$F14_j0_q05FreqUtilPreservatif, exclude = NULL)
 table(dat$F14_j0_q05FreqUtilPreservatif)/length(which(!is.na(dat$F14_j0_q05FreqUtilPreservatif)))
 
 ## Self-reported condom use with main partner in the last month for vaginal or anal sex, and number missing
-table(dat$F14_j0_q15FreqUtilervatifPart[dat$F14_j0_q11PartenaireSexPrinc == "o"], exclude = NULL)
-table(dat$F14_j0_q15FreqUtilervatifPart[dat$F14_j0_q11PartenaireSexPrinc == "o"])/length(which(!is.na(dat$F14_j0_q15FreqUtilervatifPart[dat$F14_j0_q11PartenaireSexPrinc == "o"])))
+table(dat$F14_j0_q15FreqUtilervatifPart[which(dat$F14_j0_q11PartenaireSexPrinc == "o")], exclude = NULL)
+table(dat$F14_j0_q15FreqUtilervatifPart[which(dat$F14_j0_q11PartenaireSexPrinc == "o")])/length(which(!is.na(dat$F14_j0_q15FreqUtilervatifPart[which(dat$F14_j0_q11PartenaireSexPrinc == "o")])))
 
 ############################################################################################
 ## Figure 1: Trends in self-reported sexual behavior over time since enrollment 
@@ -170,7 +177,7 @@ clients_time_point_plot <- ggplot(data = clients_dat, aes(x = visit_num, y = mea
 ## Combined plot
 fig1 <- plot_grid(condom_use_time_point_plot, clients_time_point_plot,
           nrow = 2, align = "v", rel_heights = c(1.1, 1), labels = c("(A)", "(B)"), label_size = 6, label_y = 0.2)
-jpeg(file = "../../yc/fig1.jpg", height = 4.5, width = 4, unit = 'in', res = 500)
+jpeg(file = "../../yc/fig1.jpg", height = 4.5, width = 4, unit = 'in', res = 1000)
 print(fig1)
 dev.off()
 
@@ -270,7 +277,7 @@ fig2 <- ggplot(data = yc_time_dat, aes(x = visit_num, y = 100*pct_swabs_pos)) +
   theme(axis.text = element_text(size = 8), 
        axis.title=element_text(size=8))
 
-jpeg(file = "../../yc/fig2.jpg", height = 2.5, width = 4, unit = 'in', res = 500)
+jpeg(file = "../../yc/fig2.jpg", height = 2.5, width = 4, unit = 'in', res = 1000)
 print(fig2)
 dev.off()
 
@@ -326,8 +333,8 @@ table(base_dat_yc$F14_j0_q05FreqUtilPreservatif, exclude = NULL)/length(which(!i
 table(base_dat_yc$F14_j0_q05FreqUtilPreservatif)/length(which(!is.na(base_dat_yc$F14_j0_q05FreqUtilPreservatif)))
 
 ## Self-reported condom use with main partner in the last month for vaginal or anal sex, and number missing
-table(base_dat_yc$F14_j0_q15FreqUtilervatifPart[base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o"], exclude = NULL)
-table(base_dat_yc$F14_j0_q15FreqUtilervatifPart[base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o"], exclude = NULL)/length(which(!is.na(base_dat_yc$F14_j0_q15FreqUtilervatifPart[base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o"])))
-table(base_dat_yc$F14_j0_q15FreqUtilervatifPart[base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o"])/length(which(!is.na(base_dat_yc$F14_j0_q15FreqUtilervatifPart[base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o"])))
+table(base_dat_yc$F14_j0_q15FreqUtilervatifPart[which(base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o")], exclude = NULL)
+table(base_dat_yc$F14_j0_q15FreqUtilervatifPart[which(base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o")], exclude = NULL)
+table(base_dat_yc$F14_j0_q15FreqUtilervatifPart[which(base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o")])/length(which(!is.na(base_dat_yc$F14_j0_q15FreqUtilervatifPart[which(base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o")])))
 
 
