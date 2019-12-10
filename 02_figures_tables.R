@@ -109,6 +109,18 @@ table(dat$F14_j0_q05FreqUtilPreservatif)/length(which(!is.na(dat$F14_j0_q05FreqU
 table(dat$F14_j0_q15FreqUtilervatifPart[which(dat$F14_j0_q11PartenaireSexPrinc == "o")], exclude = NULL)
 table(dat$F14_j0_q15FreqUtilervatifPart[which(dat$F14_j0_q11PartenaireSexPrinc == "o")])/length(which(!is.na(dat$F14_j0_q15FreqUtilervatifPart[which(dat$F14_j0_q11PartenaireSexPrinc == "o")])))
 
+## Confidence in condom use the next time having sex
+## With main partner
+dat$ConfianceservParten<- factor(dat$F14_j0_q18ConfianceservParten, levels = c("pasdutout", "moins", "confiante", "tres"), labels = c("Not at all", "Less confident", "Confident", "Very confident"))
+table(dat$ConfianceservParten, exclude = NULL) 
+table(dat$ConfianceservParten[which(dat$F14_j0_q11PartenaireSexPrinc == "o")], exclude = NULL) 
+table(dat$ConfianceservParten[which(dat$F14_j0_q11PartenaireSexPrinc == "o")])/length(which(!is.na(dat$ConfianceservParten[which(dat$F14_j0_q11PartenaireSexPrinc == "o")])))
+
+## With client
+dat$ConfiancePreserv <- factor(dat$F14_j0_q08ConfiancePreserv, levels = c("pasdutout", "moins", "confiante", "tres"), labels = c("Not at all", "Less confident", "Confident", "Very confident"))
+table(dat$ConfiancePreserv, exclude = NULL)
+table(dat$ConfiancePreserv) /length(which(!is.na(dat$ConfiancePreserv)))
+
 ############################################################################################
 ## Figure 1: Trends in self-reported sexual behavior over time since enrollment 
 ############################################################################################
@@ -337,4 +349,13 @@ table(base_dat_yc$F14_j0_q15FreqUtilervatifPart[which(base_dat_yc$F14_j0_q11Part
 table(base_dat_yc$F14_j0_q15FreqUtilervatifPart[which(base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o")], exclude = NULL)
 table(base_dat_yc$F14_j0_q15FreqUtilervatifPart[which(base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o")])/length(which(!is.na(base_dat_yc$F14_j0_q15FreqUtilervatifPart[which(base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o")])))
 
+## Confidence in condom use the next time having sex
+## With main partner
+# base_dat_yc$ConfianceservParten<- factor(base_dat_yc$F14_j0_q18ConfianceservParten, levels = c("pasdutout", "moins", "confiante", "tres"), labels = c("Not at all", "Less confident", "Confident", "Very confident"))
+table(base_dat_yc$ConfianceservParten[which(base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o")], exclude = NULL) 
+table(base_dat_yc$ConfianceservParten[which(base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o")])/length(which(!is.na(base_dat_yc$ConfianceservParten[which(base_dat_yc$F14_j0_q11PartenaireSexPrinc == "o")])))
 
+## With client
+# base_dat_yc$ConfiancePreserv <- factor(base_dat_yc$F14_j0_q08ConfiancePreserv, levels = c("pasdutout", "moins", "confiante", "tres"), labels = c("Not at all", "Less confident", "Confident", "Very confident"))
+table(base_dat_yc$ConfiancePreserv, exclude = NULL)
+table(base_dat_yc$ConfiancePreserv) /length(which(!is.na(base_dat_yc$ConfiancePreserv)))
